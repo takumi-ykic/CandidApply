@@ -1,0 +1,54 @@
+﻿@model CandidApply.Models.Application;
+
+<tr class="border-bottom">
+    <td>
+        @Html.DisplayFor(model => model.jobTitle)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.company)
+    </td>
+    <td>
+        @Model.applicationDate.ToString("MMM-dd-yy")
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.ApplicationStatus.statusName)
+    </td>
+    <td>
+        @{
+            if (Model.ApplicationFile != null)
+            {
+                if (@Model.ApplicationFile.resume == null)
+                {
+                    <text>No resume file uploaded</text>
+                }
+                else
+                {
+                    <a asp-action="Download" asp-controller="Histories" asp-route-filename="@Model.ApplicationFile.resume">Resume</a>
+                }
+            }
+        }
+    </td>
+    <td>
+        @{
+            if (Model.ApplicationFile != null)
+            {
+                if (@Model.ApplicationFile.coverLetter == null)
+                {
+                    <text>No Cover letter file uploaded</text>
+                }
+                else
+                {
+                    <a asp-action="Download" asp-controller="Histories" asp-route-filename="@Model.ApplicationFile.coverLetter">Cover Letter</a>
+                }
+            }
+        }
+    </td>
+    <td>
+        <a class="btn btn-info" asp-action="Details" asp-controller="Histories" asp-route-applicationId="@Model.applicationId"
+           asp-route-currentFileter="@ViewData["SearchKeyword"]"
+           asp-route-selSearchStatus="@ViewData["SelSearchStatus"]"
+           asp-route-sortDate="@ViewData["CurrentSort"]"
+           asp-route-pageNum=@ViewData["CurrentPage"]>Details</a>
+    </td>
+</tr>
+

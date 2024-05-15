@@ -1,0 +1,49 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+    Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
+}
+
+<h3>@ViewData["Title"]</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post" enctype="multipart/form-data" onsubmit="validateProfileForm(event)">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Profile.Username" class="form-control" placeholder="Please choose your username." />
+                <label asp-for="Profile.Username" class="form-label"></label>
+                <span asp-validation-for="Profile.Username" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Profile.PhoneNumber" class="form-control" placeholder="Please enter your phone number." />
+                <label asp-for="Profile.PhoneNumber" class="form-label"></label>
+                <span asp-validation-for="Profile.PhoneNumber" class="text-danger"></span>
+            </div>
+            @if (Model.Profile.Resume != null)
+            {
+                <a asp-page="./Index" asp-page-handler="Download" asp-route-filename="@Model.Profile.Resume">Resume</a>
+            }
+            <div class="form-group">
+                <label class="control-label">Template Resume (PDF only)</label>
+                <input type="file" name="uploadResume" id="inResume" accept=".pdf" />
+            </div>
+            @if (Model.Profile.CoverLetter != null)
+            {
+                <a asp-page="./Index" asp-page-handler="Download" asp-route-filename="@Model.Profile.CoverLetter">Cover Letter</a>
+            }
+            <div class="form-group">
+                <label class="control-label">Template Cover Letter (PDF only)</label>
+                <input type="file" name="uploadCoverLetter" id="inCoverLetter" accept=".pdf" />
+            </div>
+            <br />
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,99 @@
+﻿@model PaginatedList<CandidApply.Models.Application>;
+@{
+    ViewData["Title"] = "Application list";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create new application</a>
+</p>
+<form asp-action="Index" asp-controller="Applications" method="get" class="form-inline">
+    <div class="form-group mr-2" style="margin-bottom: 5px">
+        <input type="text" class="form-control" id="searchKeyword" name="searchKeyword" value="@ViewData["SearchKeyword"]" maxlength="50" placeholder="Search applications" style="width: 200px;">
+    </div>
+    <div class="form-group mr-2" style="margin-bottom: 5px">
+        <select name="selSearchStatus" class="form-control" style="width: 150px;">
+            <option value="">Select Status</option>
+            @if (ViewData["SearchStatusList"] != null)
+            {
+                @foreach (var status in (List<SelectListItem>)ViewData["SearchStatusList"])
+                {
+                    <option value="@status.Value" selected="@status.Selected">
+                        @status.Text
+                    </option>
+                }
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-secondary mr-2">Search</button>
+    <a asp-action="Index" class="btn btn-link">Show all applications</a>
+</form>
+@if (ViewData["NoApplications"] != null)
+{
+    <div style="margin: 10px">
+        <p style="font-size: larger; font-weight: bold">@ViewData["NoApplications"]</p>
+    </div>
+    
+}
+else
+{
+    <table class="table table-borderless">
+        <thead>
+            <tr class="border-bottom">
+                <th>
+                    Delete
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().jobTitle)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().company)
+                </th>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortDate=@ViewData["SortDate"]
+                       asp-route-currentFileter=@ViewData["SearchKeyword"]
+                       asp-route-selSearchStatus=@ViewData["SelSearchStatus"]>
+                        @Html.DisplayNameFor(model => model.First().applicationDate)
+                    </a>
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().ApplicationStatus.statusName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().ApplicationFile.resume)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().ApplicationFile.coverLetter)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                if (item.status == 1 || item.status == 5)
+                {
+                    @await Html.PartialAsync("_ListItemPartial", item, ViewData)
+                }
+                else
+                {
+                    @await Html.PartialAsync("_ListItemWithInterviewPartial", item, ViewData)
+                }
+            }
+        </tbody>
+    </table>
+    var prevDisabled = !Model.hasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.hasNextPage ? "disabled" : "";
+    <a asp-action="Index" asp-route-pageNum="@(Model.pageIndex - 1)" asp-route-currentFileter="@ViewData["SearchKeyword"]"
+       asp-route-selSearchStatus="@ViewData["SelSearchStatus"]"
+       asp-route-sortDate="@ViewData["CurrentSort"]" class="btn btn-default @prevDisabled">
+        Previous
+    </a>
+    <a asp-action="Index" asp-route-pageNum="@(Model.pageIndex + 1)" asp-route-currentFileter="@ViewData["SearchKeyword"]"
+       asp-route-selSearchStatus="@ViewData["SelSearchStatus"]"
+       asp-route-sortDate="@ViewData["CurrentSort"]" class="btn btn-default @nextDisabled">
+        Next
+    </a>
+}

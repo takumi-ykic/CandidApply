@@ -1,0 +1,113 @@
+﻿@model CandidApply.Models.Application;
+
+@{
+    ViewData["Title"] = "Edit application information";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h4>Application information</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="application-form" asp-action="Edit" enctype="multipart/form-data" onsubmit="validateApplicationForm(event)">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="applicationId" />
+            <div class="form-group">
+                <label asp-for="jobTitle" class="control-label"></label>
+                <input asp-for="jobTitle" class="form-control" />
+                <span asp-validation-for="jobTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="company" class="control-label"></label>
+                <input asp-for="company" class="form-control" />
+                <span asp-validation-for="company" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="applicationDate" class="control-label"></label>
+                <input asp-for="applicationDate" class="form-control" max="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                <span asp-validation-for="applicationDate" class="text-danger"></span>
+            </div>
+            @{
+                var statusDictionary = ViewData["StatusDictionary"] as Dictionary<int, SelectList>;
+                var applicationId = Model.applicationId;
+                SelectList statusList = statusDictionary != null && statusDictionary.ContainsKey(applicationId)
+                ? statusDictionary[applicationId]
+                : new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text");
+            }
+            @if(Model.ApplicationStatus != null)
+            {
+                <div class="form-group">
+                    <label asp-for="@Model.ApplicationStatus.statusName" class="control-label"></label>
+                    <select name="status" id="selectedStatus" asp-for="status" class="form-control" asp-items="statusList"></select>
+                    <span asp-validation-for="status" class="text-danger"></span>
+                </div>
+            }
+            <div id="interviewColumns" style="display: block;">
+                <div class="form-group">
+                    <label asp-for="@Model.Interview.interviewDate" class="control-label"></label>
+                    <input name="interviewDate" asp-for="@Model.Interview.interviewDate" class="form-control" type="datetime-local" />
+                    <span asp-validation-for="@Model.Interview.interviewDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.Interview.location" class="control-label"></label>
+                    <input name="location" asp-for="@Model.Interview.location" class="form-control" style="width: 100dp" />
+                    <span asp-validation-for="@Model.Interview.location" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.Interview.memo" class="control-label"></label>
+                    <textarea name="memo" asp-for="@Model.Interview.memo" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="@Model.Interview.memo" class="text-danger"></span>
+                </div>
+            </div>
+            @{
+                if (@Model.ApplicationFile != null && Model.ApplicationFile.resume != null)
+                {
+                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.resume" asp-route-applicationId="@Model.applicationId">Resume</a>
+                    <div class="form-group">
+                        <label class="control-label">Update Resume (PDF only)</label>
+                        <input type="file" name="upResume" id="inResume" accept=".pdf" />
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label class="control-label">Resume (PDF only)</label>
+                        <input type="file" name="upResume" id="inResume" accept=".pdf" />
+                    </div>
+                }
+            }
+            @{
+                if (@Model.ApplicationFile != null && Model.ApplicationFile.coverLetter != null)
+                {
+                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.coverLetter" asp-route-applicationId="@Model.applicationId">Cover Letter</a>
+                    <div class="form-group">
+                        <label class="control-label">Update Cover Letter (PDF only)</label>
+                        <input type="file" name="upCoverLetter" id="inCoverLetter" accept=".pdf" />
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label class="control-label">Cover Letter (PDF only)</label>
+                        <input type="file" name="upCoverLetter" id="inCoverLetter" accept=".pdf" />
+                    </div>
+                }
+            }
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-route-currentFileter="@ViewData["SearchKeyword"]"
+       asp-route-selSearchStatus="@ViewData["SelSearchStatus"]" asp-route-sortDate="@ViewData["CurrentSort"]"
+       asp-route-pageNum=@ViewData["CurrentPage"]>Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

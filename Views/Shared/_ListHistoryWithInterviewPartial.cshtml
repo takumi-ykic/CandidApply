@@ -1,0 +1,87 @@
+﻿@model CandidApply.Models.Application;
+
+<tr>
+    <td>
+        @Html.DisplayFor(model => model.jobTitle)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.company)
+    </td>
+    <td>
+        @Model.applicationDate.ToString("MMM-dd-yy")
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.ApplicationStatus.statusName)
+    </td>
+    <td>
+        @{
+            if (Model.ApplicationFile != null)
+            {
+                if (@Model.ApplicationFile.resume == null)
+                {
+                    <text>No resume file uploaded</text>
+                }
+                else
+                {
+                    <a asp-action="Download" asp-controller="Histories" asp-route-filename="@Model.ApplicationFile.resume">Resume</a>
+                }
+            }
+        }
+    </td>
+    <td>
+        @{
+            if (Model.ApplicationFile != null)
+            {
+                if (@Model.ApplicationFile.coverLetter == null)
+                {
+                    <text>No Cover letter file uploaded</text>
+                }
+                else
+                {
+                    <a asp-action="Download" asp-controller="Histories" asp-route-filename="@Model.ApplicationFile.coverLetter">Cover Letter</a>
+                }
+            }
+        }
+    </td>
+    <td>
+        <a class="btn btn-info" asp-action="Details" asp-controller="Histories" asp-route-applicationId="@Model.applicationId"
+           asp-route-currentFileter="@ViewData["SearchKeyword"]"
+           asp-route-selSearchStatus="@ViewData["SelSearchStatus"]"
+           asp-route-sortDate="@ViewData["CurrentSort"]"
+           asp-route-pageNum=@ViewData["CurrentPage"]>Details</a>
+    </td>
+</tr>
+<tr class="border-bottom">
+    <td colspan="1"></td>
+    <td colspan="3">
+        <table>
+            <tr style="text-align:center">
+                <td style="text-align:left;font-weight:bold">@Html.DisplayNameFor(model => model.Interview.interviewDate):  </td>
+                @if (@Model.Interview != null && @Model.Interview.interviewDate != null)
+                {
+                    string formattedDatetime = Model.Interview.interviewDate.Value.ToString("MMM-dd hh:mm tt");
+                    <td style="text-align:left">@formattedDatetime</td>
+                }
+                else
+                {
+                    <td style="text-align:left">TBD</td>
+                }
+            </tr>
+        </table>
+    </td>
+    <td colspan="4">
+        <table>
+            <tr style="text-align:center">
+                <td style="text-align:left;font-weight:bold">@Html.DisplayNameFor(model => model.Interview.location):  </td>
+                @if (@Model.Interview != null && @Model.Interview.location != null)
+                {
+                    <td style="text-align:left">@Model.Interview.location</td>
+                }
+                else
+                {
+                    <td style="text-align:left">TBD</td>
+                }
+            </tr>
+        </table>
+    </td>
+</tr>

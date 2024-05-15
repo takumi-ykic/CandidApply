@@ -1,0 +1,127 @@
+﻿@model CandidApply.Models.Application;
+
+@{
+    ViewData["Title"] = "Application details in history";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <h4>Application details</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.jobTitle)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.jobTitle)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.company)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.company)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.applicationDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.applicationDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ApplicationStatus.statusName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ApplicationStatus.statusName)
+        </dd>
+        @if (Model.status != 1 && Model.status != 5)
+        {
+            if (Model.Interview != null)
+            {
+                string? formattedDatetime;
+                if (Model.Interview.interviewDate != null)
+                {
+                    formattedDatetime = Model.Interview.interviewDate.Value.ToString("MMM-dd hh:mm tt");
+                }
+                else
+                {
+                    formattedDatetime = "TBD";
+                }
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Interview.interviewDate)
+                </dt>
+                <dd class="col-sm-10">
+                    @formattedDatetime
+                </dd>
+                string? strLocation;
+                if (Model.Interview.location != null)
+                {
+                    strLocation = Model.Interview.location.ToString();
+                }
+                else
+                {
+                    strLocation = "TBD";
+                }
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Interview.location)
+                </dt>
+                <dd class="col-sm-10">
+                    @strLocation
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Interview.memo)
+                </dt>
+                string? strMemo;
+                if (Model.Interview.memo != null)
+                {
+                    strMemo = Model.Interview.memo.ToString();
+                }
+                else
+                {
+                    strMemo = "";
+                }
+                <dd class="col-sm-10">
+                    @strMemo
+                </dd>
+            }
+        }
+        @if (Model.ApplicationFile != null)
+        {
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ApplicationFile.resume)
+            </dt>
+            if (Model.ApplicationFile.resume != null)
+            {
+                <dd class="col-sm-10">
+                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.resume">Resume</a>
+                </dd>
+            }
+            else
+            {
+                <dd class="col-sm-10">
+                    No resume file
+                </dd>
+            }
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ApplicationFile.coverLetter)
+            </dt>
+            if (Model.ApplicationFile.coverLetter != null)
+            {
+                <dd class="col-sm-10">
+                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.coverLetter">Cover Letter</a>
+                </dd>
+            }
+            else
+            {
+                <dd class="col-sm-10">
+                    No cover letter file
+                </dd>
+            }
+        }
+    </dl>
+</div>
+<div>
+    <a asp-action="Index" asp-controller="Histories" asp-route-currentFileter="@ViewData["SearchKeyword"]"
+       asp-route-selSearchStatus="@ViewData["SelSearchStatus"]" asp-route-sortDate="@ViewData["CurrentSort"]"
+       asp-route-pageNum=@ViewData["CurrentPage"]>Back to List</a>
+</div>

@@ -1,0 +1,105 @@
+﻿@model CandidApply.Models.Application;
+
+<tr>
+    <td>
+        <form id="delete_@Model.applicationId" asp-controller="Applications" asp-action="Delete" method="post">
+            <input type="hidden" name="applicationId" value="@Model.applicationId" />
+            <input name="delete[@Model.applicationId]" type="checkbox" class="rowCheckbox" data-id="@Model.applicationId" onchange="handleRemoveFromList('@Model.applicationId')" />
+        </form>
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.jobTitle)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.company)
+    </td>
+    <td>
+        @Model.applicationDate.ToString("MMM-dd-yy")
+    </td>
+    <td>
+        @{
+            var statusDictionary = ViewData["StatusDictionary"] as Dictionary<int, SelectList>;
+            SelectList statusList = statusDictionary != null && statusDictionary.ContainsKey(Model.applicationId)
+            ? statusDictionary[Model.applicationId]
+            : new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text");
+        }
+        <form id="formStatus_@Model.applicationId" asp-controller="Applications" asp-action="Status" method="post"
+              asp-route-currentFileter="@ViewData["SearchKeyword"]"
+              asp-route-selSearchStatus="@ViewData["SelSearchStatus"]"
+              asp-route-sortDate="@ViewData["CurrentSort"]"
+              asp-route-pageNum=@ViewData["CurrentPage"]>
+            <select name="selStatus[@Model.applicationId]" asp-for=@Model.status class="form-control" asp-items="statusList" onchange="handleStatusChange(this)"></select>
+        </form>
+    </td>
+    <td>
+        @{
+            if(Model.ApplicationFile != null)
+            {
+                if (@Model.ApplicationFile.resume == null)
+                {
+                    <text>No resume file uploaded</text>
+                }
+                else
+                {
+                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.resume" asp-route-applicationId="@Model.applicationId">Resume</a>
+                }
+            }
+        }
+    </td>
+    <td>
+        @{
+            if (Model.ApplicationFile != null)
+            {
+                if (@Model.ApplicationFile.coverLetter == null)
+                {
+                    <text>No Cover letter file uploaded</text>
+                }
+                else
+                {
+                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.coverLetter" asp-route-applicationId="@Model.applicationId">Cover Letter</a>
+                }
+            }
+        }
+    </td>
+    <td>
+        <a class="btn btn-info" asp-action="Details" asp-controller="Applications" asp-route-applicationId="@Model.applicationId"
+           asp-route-currentFileter="@ViewData["SearchKeyword"]"
+           asp-route-selSearchStatus="@ViewData["SelSearchStatus"]"
+           asp-route-sortDate="@ViewData["SortDate"]"
+           asp-route-pageNum=@ViewData["CurrentPage"]>Details</a>
+    </td>
+</tr>
+<tr class="border-bottom">
+    <td colspan="1"></td>
+    <td colspan="3">
+        <table>
+            <tr style="text-align:center">
+                <td style="text-align:left;font-weight:bold">@Html.DisplayNameFor(model => model.Interview.interviewDate):  </td>
+                @if(@Model.Interview != null && @Model.Interview.interviewDate != null)
+                {
+                    string formattedDatetime = Model.Interview.interviewDate.Value.ToString("MMM-dd hh:mm tt");
+                    <td style="text-align:left">@formattedDatetime</td>
+                }
+                else
+                {
+                    <td style="text-align:left">TBD</td>
+                }
+            </tr>
+        </table>
+    </td>
+    <td colspan="4">
+        <table>
+            <tr style="text-align:center">
+                <td style="text-align:left;font-weight:bold">@Html.DisplayNameFor(model => model.Interview.location):  </td>
+                @if (@Model.Interview != null && @Model.Interview.location != null)
+                {
+                    <td style="text-align:left">@Model.Interview.location</td>
+                }
+                else
+                {
+                    <td style="text-align:left">TBD</td>
+                }  
+            </tr>
+        </table>
+    </td>
+</tr>
