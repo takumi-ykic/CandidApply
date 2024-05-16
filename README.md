@@ -8,6 +8,7 @@ which are adding a new record, updating progress, stroing interview information,
 downloading them. The purpose of this application is that offering the simple way to manage job applications.
 
 ## Tech Stack
+- C#
 - ASP.NET Core
 - MVC for application management
 - Entity Framework Core
