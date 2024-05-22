@@ -13,6 +13,9 @@ using Microsoft.Extensions.Logging;
 
 namespace CandidApply.Areas.Identity.Pages.Account
 {
+    /// <summary>
+    /// Logout class to implement logout function
+    /// </summary>
     public class LogoutModel : PageModel
     {
         private readonly SignInManager<User> _signInManager;
@@ -24,12 +27,16 @@ namespace CandidApply.Areas.Identity.Pages.Account
             _logger = logger;
         }
 
+        /// <summary>
+        /// Post method, when user click logout button
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
+            // Logout with using Identity framework function
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)
             {
+                // Move to page based on return url
                 return LocalRedirect(returnUrl);
             }
             else
