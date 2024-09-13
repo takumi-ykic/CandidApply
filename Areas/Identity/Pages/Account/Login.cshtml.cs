@@ -105,7 +105,7 @@ namespace CandidApply.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    //If user was not found by email, add error messsage
+                    // If user was not found by email, add error messsage
                     ModelState.AddModelError(string.Empty, "Not found user");
                     // Return login page with error message
                     return Page();

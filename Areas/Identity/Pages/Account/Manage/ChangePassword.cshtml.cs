@@ -51,7 +51,7 @@ namespace CandidApply.Areas.Identity.Pages.Account.Manage
             public string ConfirmPassword { get; set; }
         }
 
-        /// <summary.
+        /// <summary>
         /// Get method, get user information by User Identity, check if a user has password
         /// </summary>
         /// <return> If user information is set properly, move to change password page. If user information is not valid, move to Not Found page or SetPassword page
@@ -65,11 +65,11 @@ namespace CandidApply.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            //var hasPassword = await _userManager.HasPasswordAsync(user);
-            //if (!hasPassword)
-            //{
-            //    return RedirectToPage("./SetPassword");
-            //}
+            var hasPassword = await _userManager.HasPasswordAsync(user);
+            if (!hasPassword)
+            {
+                return RedirectToPage("./SetPassword");
+            }
 
             // Move to change password page
             return Page();

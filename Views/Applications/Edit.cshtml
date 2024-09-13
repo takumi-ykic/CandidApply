@@ -11,8 +11,12 @@
 <div class="row">
     <div class="col-md-4">
         <form id="application-form" asp-action="Edit" enctype="multipart/form-data" onsubmit="validateApplicationForm(event)">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="applicationId" />
+            <input type="hidden" name="CurrentKeyword" value="@ViewData["FilterKeyword"]" />
+            <input type="hidden" name="FilterStatus" value="@ViewData["FilterStatus"]" />
+            <input type="hidden" name="CurrentOrder" value="@ViewData["CurrentOrder"]" />
+            <input type="hidden" name="CurrentPage" value="@ViewData["CurrentPage"]" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="jobTitle" class="control-label"></label>
                 <input asp-for="jobTitle" class="form-control" />
@@ -29,7 +33,7 @@
                 <span asp-validation-for="applicationDate" class="text-danger"></span>
             </div>
             @{
-                var statusDictionary = ViewData["StatusDictionary"] as Dictionary<int, SelectList>;
+                var statusDictionary = ViewData["StatusDictionary"] as Dictionary<string, SelectList>;
                 var applicationId = Model.applicationId;
                 SelectList statusList = statusDictionary != null && statusDictionary.ContainsKey(applicationId)
                 ? statusDictionary[applicationId]
@@ -103,8 +107,8 @@
 </div>
 
 <div>
-    <a asp-action="Index" asp-route-currentFileter="@ViewData["SearchKeyword"]"
-       asp-route-selSearchStatus="@ViewData["SelSearchStatus"]" asp-route-sortDate="@ViewData["CurrentSort"]"
+    <a asp-action="Index" asp-route-currentKeyword="@ViewData["FilterKeyword"]"
+       asp-route-filterStatus="@ViewData["FilterStatus"]" asp-route-ordering="@ViewData["CurrentOrder"]"
        asp-route-pageNum=@ViewData["CurrentPage"]>Back to List</a>
 </div>
 

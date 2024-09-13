@@ -5,9 +5,9 @@ namespace CandidApply.Models
 {
     public class Application
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Display(Name = "Job No.")]
-        public int applicationId { get; set; }
+        public string? applicationId { get; set; }
         public string? userId { get; set; }
         [Required]
         [Display(Name = "Job Title")]

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CandidApply.Migrations.User
 {
     /// <inheritdoc />
-    public partial class initialuser : Migration
+    public partial class InitialUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,8 +32,6 @@ namespace CandidApply.Migrations.User
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     resume = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     coverLetter = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    resumeUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    coverLetterUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),

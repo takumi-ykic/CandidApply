@@ -31,6 +31,10 @@ namespace CandidApply.Data
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Application>()
+                .HasIndex(a => a.applicationId)
+                .IsUnique(true);
+
+            modelBuilder.Entity<Application>()
                 .HasOne(a => a.ApplicationStatus)
                 .WithMany()
                 .HasForeignKey(a => a.status)

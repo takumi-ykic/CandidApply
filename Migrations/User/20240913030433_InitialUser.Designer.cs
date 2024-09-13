@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CandidApply.Migrations.User
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20240514023649_initialuser")]
-    partial class initialuser
+    [Migration("20240913030433_InitialUser")]
+    partial class InitialUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -80,13 +80,7 @@ namespace CandidApply.Migrations.User
                     b.Property<string>("coverLetter")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("coverLetterUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("resume")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("resumeUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

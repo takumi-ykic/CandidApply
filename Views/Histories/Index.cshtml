@@ -7,14 +7,14 @@
 <h1>@ViewData["Title"]</h1>
 <form asp-action="Index" asp-controller="Histories" method="get" class="form-inline">
     <div class="form-group mr-2" style="margin-bottom: 5px">
-        <input type="text" class="form-control" id="searchKeyword" name="searchKeyword" value="@ViewData["SearchKeyword"]" maxlength="50" placeholder="Search applications" style="width: 200px;">
+        <input type="text" class="form-control" id="filterKeyword" name="filterKeyword" value="@ViewData["FilterKeyword"]" maxlength="50" placeholder="Search applications" style="width: 200px;">
     </div>
     <div class="form-group mr-2" style="margin-bottom: 5px">
-        <select name="selSearchStatus" class="form-control" style="width: 150px;">
+        <select name="filterStatus" class="form-control" style="width: 150px;">
             <option value="">Select Status</option>
-            @if (ViewData["SearchStatusList"] != null)
+            @if (ViewData["StatusList"] != null)
             {
-                @foreach (var status in (List<SelectListItem>)ViewData["SearchStatusList"])
+                @foreach (var status in (List<SelectListItem>)ViewData["StatusList"])
                 {
                     <option value="@status.Value" selected="@status.Selected">
                         @status.Text
@@ -46,9 +46,9 @@ else
                 </th>
                 <th>
                     <a asp-action="Index" asp-controller="Histories"
-                       asp-route-sortDate=@ViewData["SortDate"]
-                       asp-route-currentFileter=@ViewData["SearchKeyword"]
-                       asp-route-selSearchStatus=@ViewData["SelSearchStatus"]>
+                       asp-route-ordering=@ViewData["Ordering"]
+                       asp-route-currentKeyword=@ViewData["FilterKeyword"]
+                       asp-route-filterStatus=@ViewData["FilterStatus"]>
                         @Html.DisplayNameFor(model => model.First().applicationDate)
                     </a>
                 </th>
@@ -80,14 +80,14 @@ else
     </table>
     var prevDisabled = !Model.hasPreviousPage ? "disabled" : "";
     var nextDisabled = !Model.hasNextPage ? "disabled" : "";
-    <a asp-action="Index" asp-controller="Histories" asp-route-pageNum="@(Model.pageIndex - 1)" asp-route-currentFileter="@ViewData["SearchKeyword"]"
-       asp-route-selSearchStatus="@ViewData["SelSearchStatus"]"
-       asp-route-sortDate="@ViewData["CurrentSort"]" class="btn btn-default @prevDisabled">
+    <a asp-action="Index" asp-controller="Histories" asp-route-pageNum="@(Model.pageIndex - 1)" asp-route-currentKeyword="@ViewData["FilterKeyword"]"
+       asp-route-filterStatus="@ViewData["FilterStatus"]"
+       asp-route-ordering="@ViewData["CurrentOrder"]" class="btn btn-default @prevDisabled">
         Previous
     </a>
-    <a asp-action="Index" asp-controller="Histories"  asp-route-pageNum="@(Model.pageIndex + 1)" asp-route-currentFileter="@ViewData["SearchKeyword"]"
-       asp-route-selSearchStatus="@ViewData["SelSearchStatus"]"
-       asp-route-sortDate="@ViewData["CurrentSort"]" class="btn btn-default @nextDisabled">
+    <a asp-action="Index" asp-controller="Histories"  asp-route-pageNum="@(Model.pageIndex + 1)" asp-route-currentKeyword="@ViewData["FilterKeyword"]"
+       asp-route-filterStatus="@ViewData["FilterStatus"]"
+       asp-route-ordering="@ViewData["CurrentOrder"]" class="btn btn-default @nextDisabled">
         Next
     </a>
 }

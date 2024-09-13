@@ -93,7 +93,7 @@
             if (Model.ApplicationFile.resume != null)
             {
                 <dd class="col-sm-10">
-                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.resume" asp-route-applicationId="@Model.applicationId">Resume</a>
+                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.resume">Resume</a>
                 </dd>
             }
             else
@@ -108,7 +108,7 @@
             if (Model.ApplicationFile.coverLetter != null)
             {
                 <dd class="col-sm-10">
-                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.coverLetter" asp-route-applicationId="@Model.applicationId">Cover Letter</a>
+                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.coverLetter">Cover Letter</a>
                 </dd>
             }
             else
@@ -121,13 +121,14 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { applicationId = Model.applicationId, currentFileter = ViewData["SearchKeyword"], 
-            selSearchStatus = ViewData["SelSearchStatus"],
-            sortDate = ViewData["CurrentSort"],
+    @Html.ActionLink("Edit", "Edit", new { applicationId = Model.applicationId, 
+            currentKeyword = ViewData["FilterKeyword"], 
+            filterStatus = ViewData["FilterStatus"],
+            ordering = ViewData["CurrentOrder"],
             pageNum = @ViewData["CurrentPage"]},
             new { @class = "btn btn-success" }) |
-    <a asp-action="Index" asp-route-currentFileter="@ViewData["SearchKeyword"]"
-       asp-route-selSearchStatus="@ViewData["SelSearchStatus"]"
-       asp-route-sortDate="@ViewData["CurrentSort"]"
+    <a asp-action="Index" asp-route-currentKeyword="@ViewData["FilterKeyword"]"
+       asp-route-filterStatus="@ViewData["FilterStatus"]"
+       asp-route-ordering="@ViewData["CurrentOrder"]"
        asp-route-pageNum=@ViewData["CurrentPage"]>Back to List</a>
 </div>

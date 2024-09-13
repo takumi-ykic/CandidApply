@@ -1,11 +1,9 @@
 ﻿#nullable disable
 
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Security.Claims;
-using Azure.Storage.Blobs;
+using CandidApply.CommonMethods;
 using CandidApply.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -41,8 +39,6 @@ namespace CandidApply.Areas.Identity.Pages.Account.Manage
 
         [BindProperty]
         public ProfileModel Profile { get; set; }
-        public string resumeUrl { get; set; }
-        public string coverLetterUrl { get; set; }
 
         /// <suumary>
         /// Profile Model for user information
@@ -57,10 +53,8 @@ namespace CandidApply.Areas.Identity.Pages.Account.Manage
             public string PhoneNumber { get; set; }
             [Display(Name = "Resume")]
             public string Resume { get; set; }
-            public string ResumeUrl { get; set; }
             [Display(Name = "Cover Letter")]
             public string CoverLetter { get; set; }
-            public string CoverLetterUrl { get; set; }
         }
 
         /// <summary>
@@ -95,9 +89,7 @@ namespace CandidApply.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             string resume = null;
-            string resumeUrl = null;
             string coverLetter = null;
-            string coverLetterUrl = null;
 
             // Check if resume is null
             if (user.resume != null)
@@ -121,9 +113,7 @@ namespace CandidApply.Areas.Identity.Pages.Account.Manage
                 PhoneNumber = phoneNumber,
                 Username = userName,
                 Resume = resume,
-                ResumeUrl = resumeUrl,
                 CoverLetter = coverLetter,
-                CoverLetterUrl = coverLetterUrl
             };
         }
 
@@ -220,12 +210,20 @@ namespace CandidApply.Areas.Identity.Pages.Account.Manage
             }
 
             // Check if resume is null
+            bool isUpdate = false;
+            string userId = user.Id.ToString().Substring(0, 16);
             if (uploadResume != null && uploadResume.Length != 0)
             {
                 // Execute uploading resume to Azure Blob
-                bool flag = await UploadResume(user, uploadResume);
+                string fileName = userId + "_resume.pdf";
+                bool flag = await FileHelper.UploadFileAsync(fileName, uploadResume, _path, _container);
                 // Check if uploading is success
-                if (!flag)
+                if (flag)
+                {
+                    user.resume = fileName;
+                    isUpdate = true;
+                }
+                else
                 {
                     // Failure, add error message
                     ModelState.AddModelError(string.Empty, "Fail to upload resume.");
@@ -238,15 +236,27 @@ namespace CandidApply.Areas.Identity.Pages.Account.Manage
             if (uploadCoverLetter != null && uploadCoverLetter.Length != 0)
             {
                 // Execute uploading cover letter to Azure Blob
-                bool flag = await UploadCoverLetter(user, uploadCoverLetter);
+                string fileName = userId + "_coverletter.pdf";
+                bool flag = await FileHelper.UploadFileAsync(fileName, uploadCoverLetter, _path, _container);
                 // Check if uploading is success
-                if (!flag)
+                if (flag)
+                {
+                    user.coverLetter = fileName;
+                    isUpdate = true;
+                }
+                else
                 {
                     // Failure, add error message
                     ModelState.AddModelError(string.Empty, "Fail to upload cover letter.");
                     // Return to main page with error message
                     return Page();
                 }
+            }
+
+            // Update files in user
+            if (isUpdate)
+            {
+                await _userManager.UpdateAsync(user);
             }
 
             // Update signin information with new user information
@@ -259,123 +269,9 @@ namespace CandidApply.Areas.Identity.Pages.Account.Manage
         }
 
         /// <summary>
-        /// Logic to upload resume file to Azure Blob
-        /// </summary>
-        /// <param name="user"> User class
-        /// <param name="uploadResume"> Resume file as IFormFile
-        /// <return> Boolean, if proccess is success, flag is true, if not, flag is false
-        public async Task<bool> UploadResume(User user, IFormFile uploadResume)
-        {
-            // Get userId
-            var userId = await _userManager.GetUserIdAsync(user);
-
-            try
-            {
-                // Create Azure BlobServiceClient
-                BlobServiceClient blobServiceClient = new BlobServiceClient(_path);
-
-                // Create Azure BlobContainerClient
-                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_container);
-
-                // Check if target container exists
-                if(!await containerClient.ExistsAsync())
-                {
-                    // If target container does not exist, create one
-                    await containerClient.CreateIfNotExistsAsync();
-                }
-
-                // Set blobname, this is file name
-                string blobName = userId.Substring(0, Math.Min(5, userId.Length)) + "_resume.pdf";
-                // Set path to upload file
-                BlobClient blobClient = containerClient.GetBlobClient(blobName);
-                // Check if file exists
-                if(await blobClient.ExistsAsync())
-                {
-                    // File exists, delete this to avoid duplicate the same file name
-                    await blobClient.DeleteAsync();
-                }
-
-                // Upload file
-                await containerClient.UploadBlobAsync(blobName, uploadResume.OpenReadStream());
-
-                // Update file name in table
-                user.resume = blobName;
-                // Update user information with using Identity framework
-                await _userManager.UpdateAsync(user);
-
-                // Return true
-                return true;
-            }
-            catch (Exception ex)
-            {
-                // Display error message in console
-                Console.WriteLine($"Error uploading resume: {ex.Message}");
-                // Return false
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Logic to upload cover letter file to Azure Blob
-        /// </summary>
-        /// <param name="user"> User class
-        /// <param name="uploadCoverLetter"> Cover Letter file as IFormFile
-        /// <return> Boolean, if proccess is success, flag is true, if not, flag is false
-        public async Task<bool> UploadCoverLetter(User user, IFormFile uploadCoverLetter)
-        {
-            // Get userId
-            var userId = await _userManager.GetUserIdAsync(user);
-
-            try
-            {
-                // Create Azure BlobServiceClient
-                BlobServiceClient blobServiceClient = new BlobServiceClient(_path);
-
-                // Create Azure BlobContainerClient
-                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_container);
-
-                // Check if target container exists
-                if (!await containerClient.ExistsAsync())
-                {
-                    // If target container does not exist, create one
-                    await containerClient.CreateIfNotExistsAsync();
-                }
-
-                // Set blobname, this is file name
-                string blobName = userId.Substring(0, Math.Min(5, userId.Length)) + "_coverletter.pdf";
-                // Set path to upload file
-                BlobClient blobClient = containerClient.GetBlobClient(blobName);
-                // Check if file exists
-                if (await blobClient.ExistsAsync())
-                {
-                    // File exists, delete this to avoid duplicate the same file name
-                    await blobClient.DeleteAsync();
-                }
-
-                // Upload file
-                await containerClient.UploadBlobAsync(blobName, uploadCoverLetter.OpenReadStream());
-
-                // Update file name in table
-                user.coverLetter = blobName;
-                // Update user information with using Identity framework
-                await _userManager.UpdateAsync(user);
-
-                // Return true
-                return true;
-            }
-            catch (Exception ex)
-            {
-                // Display error message in console
-                Console.WriteLine($"Error uploading resume: {ex.Message}");
-                // Return false
-                return false;
-            }
-        }
-
-        /// <summary>
         /// Get mehotd, download files from Azure Blob
         /// </summary>
-        /// <param name="fileName"> File name
+        /// <param name="fileName"> File name</param>
         /// <return> File
         [HttpGet]
         public async Task<IActionResult> OnGetDownload(string fileName)
@@ -387,37 +283,11 @@ namespace CandidApply.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            try
-            {
-                // Create Azure BlobServiceClient instance with path
-                BlobServiceClient blobServiceClient = new BlobServiceClient(_path);
-                // Create Azure BlobContainerClient instance
-                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_container);
-                // Crate Azure BlobClient with fileName
-                BlobClient blobClient = containerClient.GetBlobClient(fileName);
+            // Call FileHelper class to download file, it returns FileStreamResult
+            var result = await FileHelper.DownloadFileAsync(fileName, _path, _container);
 
-                // Prepare to read file
-                var response = await blobClient.OpenReadAsync();
-
-                // Start transaction
-                using(var memoryStream = new MemoryStream())
-                {
-                    // Copy to allocated memory
-                    await response.CopyToAsync(memoryStream);
-                    // Set content type
-                    var contentType = "application/octet-stream";
-
-                    // Return File, downloading file will begin
-                    return File(memoryStream.ToArray(), contentType, fileName);
-                }
-            }
-            catch(Exception ex)
-            {
-                // Display error message in console
-                Console.WriteLine($"Error download file: {ex.Message}");
-                // Return page
-                return Page();
-            }  
+            // Download file
+            return result;
         }
     }
 }

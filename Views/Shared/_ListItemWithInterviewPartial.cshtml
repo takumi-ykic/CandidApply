@@ -18,15 +18,15 @@
     </td>
     <td>
         @{
-            var statusDictionary = ViewData["StatusDictionary"] as Dictionary<int, SelectList>;
+            var statusDictionary = ViewData["StatusDictionary"] as Dictionary<string, SelectList>;
             SelectList statusList = statusDictionary != null && statusDictionary.ContainsKey(Model.applicationId)
             ? statusDictionary[Model.applicationId]
             : new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text");
         }
         <form id="formStatus_@Model.applicationId" asp-controller="Applications" asp-action="Status" method="post"
-              asp-route-currentFileter="@ViewData["SearchKeyword"]"
-              asp-route-selSearchStatus="@ViewData["SelSearchStatus"]"
-              asp-route-sortDate="@ViewData["CurrentSort"]"
+              asp-route-currentKeyword="@ViewData["FilterKeyword"]"
+              asp-route-filterStatus="@ViewData["FilterStatus"]"
+              asp-route-ordering="@ViewData["CurrentOrder"]"
               asp-route-pageNum=@ViewData["CurrentPage"]>
             <select name="selStatus[@Model.applicationId]" asp-for=@Model.status class="form-control" asp-items="statusList" onchange="handleStatusChange(this)"></select>
         </form>
@@ -37,11 +37,11 @@
             {
                 if (@Model.ApplicationFile.resume == null)
                 {
-                    <text>No resume file uploaded</text>
+                    <text>No Resume file uploaded</text>
                 }
                 else
                 {
-                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.resume" asp-route-applicationId="@Model.applicationId">Resume</a>
+                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.resume">Resume</a>
                 }
             }
         }
@@ -52,20 +52,20 @@
             {
                 if (@Model.ApplicationFile.coverLetter == null)
                 {
-                    <text>No Cover letter file uploaded</text>
+                    <text>No Cover Letter file uploaded</text>
                 }
                 else
                 {
-                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.coverLetter" asp-route-applicationId="@Model.applicationId">Cover Letter</a>
+                    <a asp-action="Download" asp-route-filename="@Model.ApplicationFile.coverLetter">Cover Letter</a>
                 }
             }
         }
     </td>
     <td>
         <a class="btn btn-info" asp-action="Details" asp-controller="Applications" asp-route-applicationId="@Model.applicationId"
-           asp-route-currentFileter="@ViewData["SearchKeyword"]"
-           asp-route-selSearchStatus="@ViewData["SelSearchStatus"]"
-           asp-route-sortDate="@ViewData["SortDate"]"
+           asp-route-currentKeyword="@ViewData["FilterKeyword"]"
+           asp-route-filterStatus="@ViewData["FilterStatus"]"
+           asp-route-ordering="@ViewData["CurrentOrder"]"
            asp-route-pageNum=@ViewData["CurrentPage"]>Details</a>
     </td>
 </tr>

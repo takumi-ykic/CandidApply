@@ -4,14 +4,7 @@ using CandidApply.Data;
 using CandidApply.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using System;
-using System.Configuration;
-using System.IO;
-using System.Threading.Tasks;
-using Azure;
-using Azure.Storage;
-using Azure.Storage.Blobs;
-using Azure.Storage.Sas;
+using CandidApply.Helpers;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,13 +39,14 @@ builder.Services.AddLogging(options => options.AddConsole());
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.LoginPath = "/Identity/Account/Login";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
 });
 
 builder.Services.AddScoped<ApplicationContext>();
+builder.Services.AddScoped<IIdGenerator, IdHelper>();
 builder.Services.AddRazorPages();
 
 builder.Services.AddControllers(config =>

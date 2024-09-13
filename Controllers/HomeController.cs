@@ -36,11 +36,6 @@ namespace CandidApply.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         /// <summary>
         /// Move to login page through button
         /// </summary>

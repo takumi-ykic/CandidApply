@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CandidApply.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240514022559_initialAppContext")]
-    partial class initialAppContext
+    [Migration("20240913025306_InitialApplication")]
+    partial class InitialApplication
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,9 @@ namespace CandidApply.Migrations
 
             modelBuilder.Entity("CandidApply.Models.Application", b =>
                 {
-                    b.Property<int>("applicationId")
+                    b.Property<string>("applicationId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("applicationId"));
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("applicationDate")
                         .HasColumnType("datetime2");
@@ -60,6 +58,9 @@ namespace CandidApply.Migrations
 
                     b.HasKey("applicationId");
 
+                    b.HasIndex("applicationId")
+                        .IsUnique();
+
                     b.HasIndex("status");
 
                     b.ToTable("Application", (string)null);
@@ -73,25 +74,20 @@ namespace CandidApply.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("fileId"));
 
-                    b.Property<int>("applicationId")
-                        .HasColumnType("int");
+                    b.Property<string>("applicationId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("coverLetter")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("coverLetterPath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("resume")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("resumePath")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("fileId");
 
                     b.HasIndex("applicationId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[applicationId] IS NOT NULL");
 
                     b.ToTable("ApplicationFile", (string)null);
                 });
@@ -120,8 +116,8 @@ namespace CandidApply.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("interviewId"));
 
-                    b.Property<int>("applicationId")
-                        .HasColumnType("int");
+                    b.Property<string>("applicationId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("interviewDate")
                         .HasColumnType("datetime2");
@@ -137,7 +133,8 @@ namespace CandidApply.Migrations
                     b.HasKey("interviewId");
 
                     b.HasIndex("applicationId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[applicationId] IS NOT NULL");
 
                     b.ToTable("Interview", (string)null);
                 });
@@ -157,9 +154,7 @@ namespace CandidApply.Migrations
                 {
                     b.HasOne("CandidApply.Models.Application", "Application")
                         .WithOne("ApplicationFile")
-                        .HasForeignKey("CandidApply.Models.ApplicationFile", "applicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CandidApply.Models.ApplicationFile", "applicationId");
 
                     b.Navigation("Application");
                 });
@@ -168,9 +163,7 @@ namespace CandidApply.Migrations
                 {
                     b.HasOne("CandidApply.Models.Application", "Application")
                         .WithOne("Interview")
-                        .HasForeignKey("CandidApply.Models.Interview", "applicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CandidApply.Models.Interview", "applicationId");
 
                     b.Navigation("Application");
                 });

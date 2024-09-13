@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CandidApply.Migrations
 {
     /// <inheritdoc />
-    public partial class initialAppContext : Migration
+    public partial class InitialApplication : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,8 +28,7 @@ namespace CandidApply.Migrations
                 name: "Application",
                 columns: table => new
                 {
-                    applicationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    applicationId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     userId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     jobTitle = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
                     company = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
@@ -55,11 +54,9 @@ namespace CandidApply.Migrations
                 {
                     fileId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    applicationId = table.Column<int>(type: "int", nullable: false),
+                    applicationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     resume = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    resumePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    coverLetter = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    coverLetterPath = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    coverLetter = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -68,8 +65,7 @@ namespace CandidApply.Migrations
                         name: "FK_ApplicationFile_Application_applicationId",
                         column: x => x.applicationId,
                         principalTable: "Application",
-                        principalColumn: "applicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "applicationId");
                 });
 
             migrationBuilder.CreateTable(
@@ -78,7 +74,7 @@ namespace CandidApply.Migrations
                 {
                     interviewId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    applicationId = table.Column<int>(type: "int", nullable: false),
+                    applicationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     interviewDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     location = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: true),
                     memo = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true)
@@ -90,9 +86,14 @@ namespace CandidApply.Migrations
                         name: "FK_Interview_Application_applicationId",
                         column: x => x.applicationId,
                         principalTable: "Application",
-                        principalColumn: "applicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "applicationId");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Application_applicationId",
+                table: "Application",
+                column: "applicationId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Application_status",
@@ -103,13 +104,15 @@ namespace CandidApply.Migrations
                 name: "IX_ApplicationFile_applicationId",
                 table: "ApplicationFile",
                 column: "applicationId",
-                unique: true);
+                unique: true,
+                filter: "[applicationId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Interview_applicationId",
                 table: "Interview",
                 column: "applicationId",
-                unique: true);
+                unique: true,
+                filter: "[applicationId] IS NOT NULL");
         }
 
         /// <inheritdoc />

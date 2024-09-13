@@ -121,7 +121,7 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Index" asp-controller="Histories" asp-route-currentFileter="@ViewData["SearchKeyword"]"
-       asp-route-selSearchStatus="@ViewData["SelSearchStatus"]" asp-route-sortDate="@ViewData["CurrentSort"]"
+    <a asp-action="Index" asp-controller="Histories" asp-route-currentKeyword="@ViewData["FilterKeyword"]"
+       asp-route-filterStatus="@ViewData["FilterStatus"]" asp-route-ordering="@ViewData["CurrentOrder"]"
        asp-route-pageNum=@ViewData["CurrentPage"]>Back to List</a>
 </div>

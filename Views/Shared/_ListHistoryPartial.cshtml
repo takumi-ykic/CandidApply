@@ -19,7 +19,7 @@
             {
                 if (@Model.ApplicationFile.resume == null)
                 {
-                    <text>No resume file uploaded</text>
+                    <text>No Resume file uploaded</text>
                 }
                 else
                 {
@@ -34,7 +34,7 @@
             {
                 if (@Model.ApplicationFile.coverLetter == null)
                 {
-                    <text>No Cover letter file uploaded</text>
+                    <text>No Cover Letter file uploaded</text>
                 }
                 else
                 {
@@ -45,9 +45,9 @@
     </td>
     <td>
         <a class="btn btn-info" asp-action="Details" asp-controller="Histories" asp-route-applicationId="@Model.applicationId"
-           asp-route-currentFileter="@ViewData["SearchKeyword"]"
-           asp-route-selSearchStatus="@ViewData["SelSearchStatus"]"
-           asp-route-sortDate="@ViewData["CurrentSort"]"
+           asp-route-currentKeyword="@ViewData["FilterKeyword"]"
+           asp-route-filterStatus="@ViewData["FilterStatus"]"
+           asp-route-ordering="@ViewData["CurrentOrder"]"
            asp-route-pageNum=@ViewData["CurrentPage"]>Details</a>
     </td>
 </tr>
