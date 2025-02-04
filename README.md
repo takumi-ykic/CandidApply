@@ -1,6 +1,6 @@
 # CandidApply
 Job Application management system.  
-[Click to move CandidApply deploying in Azure App Service.](https://candidapply20240514120238.azurewebsites.net/)
+[Click to move CandidApply deploying in Azure App Service.](https://candidapply20240514120238.azurewebsites.net/) - *This link is no longer active. The application may have been moved or is no longer available at this address.*
 
 ## Application overview
 CandidApply is the simple job application management system. This has fundamental functions to manage job applications easily,
